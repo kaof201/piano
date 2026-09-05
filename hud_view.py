@@ -1,9 +1,10 @@
 """
-hud_view.py - Cabecera con titulo, instrucciones y progreso de la cancion
+hud_view.py - Cabecera con titulo, instrucciones, progreso y puntaje
 =============================================================================
 Todo lo que se dibuja ARRIBA del piano cuando estas en modo libre o
 practicando una cancion: titulo, linea de estado, y en modo practica
-la barra de progreso de la nota actual + la tira de proximas notas.
+la barra de progreso de la nota actual + la tira de proximas notas +
+el puntaje/combo en vivo + el popup flotante de feedback (+15, -5...).
 
 El menu de seleccion de canciones tiene su propio archivo
 (menu_view.py) porque ocupa toda la pantalla en vez de solo la
@@ -13,7 +14,7 @@ cabecera.
 import pygame
 
 import theme
-from config import SIDE_MARGIN, MODE_SONG, OFFSET_TO_LABEL
+from config import SIDE_MARGIN, WIDTH, MODE_SONG, OFFSET_TO_LABEL
 from music_theory import label_for_absolute_midi, note_name_for_offset, needed_base_for_midi
 from visuals import render_text_with_shadow, rounded_rect_vertical_gradient
 
@@ -25,10 +26,13 @@ def draw_hud(screen, fonts, state):
     )
 
     octave_info = (
-        f"Octava base: {note_name_for_offset(0, state['base_midi'])}   |   "
-        f"Tempo: {state['bpm']} BPM (+/-)   |   F11: pantalla completa"
+        f"Octava base: {note_name_for_offset(0, state['base_midi'])} | "
+        f"Tempo: {state['bpm']} BPM (+/-) | F11: pantalla completa"
     )
     screen.blit(fonts["subtitle"].render(octave_info, True, theme.TEXT_DIM), (SIDE_MARGIN, 58))
+
+    if state["mode"] == MODE_SONG:
+        _draw_score_line(screen, fonts, state)
 
     if state["message"] and pygame.time.get_ticks() < state["message_until"]:
         screen.blit(fonts["body_bold"].render(state["message"], True, theme.TARGET_GLOW),
@@ -38,9 +42,34 @@ def draw_hud(screen, fonts, state):
     if state["mode"] == MODE_SONG:
         _draw_song_progress(screen, fonts, state)
     else:
-        hint = ("Flechas arriba/abajo: octava (C1-C5)   |   P: practicar canciones   |   "
-                "F11: pantalla completa   |   ESC: salir")
+        hint = ("Flechas arriba/abajo: octava (C1-C5) | P: practicar canciones | "
+                "F11: pantalla completa | ESC: salir")
         screen.blit(fonts["subtitle"].render(hint, True, theme.TEXT_DIM), (SIDE_MARGIN, 96))
+
+    _draw_popup(screen, fonts, state)
+
+
+def _draw_score_line(screen, fonts, state):
+    """Puntaje y combo en vivo, arriba a la derecha, visible todo el
+    tiempo mientras se practica una cancion."""
+    combo = state["combo"]
+    text = f"Puntaje: {state['score']}   Combo: {combo}"
+    if state["misses"]:
+        text += f"   Fallos: {state['misses']}"
+    rendered = fonts["body_bold"].render(text, True, theme.TEXT_ACCENT)
+    x = WIDTH - SIDE_MARGIN - rendered.get_width()
+    screen.blit(rendered, (x, 20))
+
+
+def _draw_popup(screen, fonts, state):
+    """Feedback flotante tipo '+15 (x1.5)' o '-5' que aparece un
+    instante despues de cada nota correcta o cada fallo."""
+    if not state["popup_text"] or pygame.time.get_ticks() >= state["popup_until"]:
+        return
+    color = state["popup_color"] or theme.TEXT_ACCENT
+    rendered = fonts["body_bold"].render(state["popup_text"], True, color)
+    x = WIDTH - SIDE_MARGIN - rendered.get_width()
+    screen.blit(rendered, (x, 46))
 
 
 def _draw_song_progress(screen, fonts, state):
@@ -50,7 +79,7 @@ def _draw_song_progress(screen, fonts, state):
     durations = state["song_durations"]
     idx = state["song_index"]
 
-    progress = f"Practicando: {name}   (nota {min(idx + 1, len(midis))}/{len(midis)})"
+    progress = f"Practicando: {name} (nota {min(idx + 1, len(midis))}/{len(midis)})"
     screen.blit(fonts["body_bold"].render(progress, True, theme.TEXT_PRIMARY), (SIDE_MARGIN, 92))
 
     if idx < len(midis):
@@ -77,7 +106,6 @@ def _draw_song_progress(screen, fonts, state):
             key_label = OFFSET_TO_LABEL[target_offset_view]
             hold_text = f"Manten presionada la tecla {key_label} durante ~{required:.2f}s"
             screen.blit(fonts["body"].render(hold_text, True, theme.TEXT_PRIMARY), (SIDE_MARGIN, 118))
-
             _draw_progress_bar(screen, SIDE_MARGIN, 146, 320, 16, fraction)
 
     _draw_upcoming_chips(screen, fonts, midis, idx, base_midi)
@@ -108,6 +136,7 @@ def _draw_upcoming_chips(screen, fonts, midis, idx, base_midi):
         else:
             bg = theme.PANEL_BG
             fg = theme.TEXT_PRIMARY
+
         chip = fonts["chip"].render(label, True, fg)
         pad = 7
         w, h = chip.get_size()

@@ -38,6 +38,34 @@ BPM_MIN, BPM_MAX, BPM_STEP = 40, 240, 5
 HOLD_TOLERANCE = 1.0  # 1.0 = debe cumplirse el 100% del tiempo
 
 # ------------------------------------------------------------------
+# Sistema de puntuacion (estilo "Magic Tiles")
+# ------------------------------------------------------------------
+# Puntos base que da cada nota correcta, antes de aplicar el
+# multiplicador de combo.
+SCORE_BASE_POINTS = 10
+
+# Cuantos puntos se restan (y el combo se rompe a 0) si presionas
+# una tecla que no es la nota que toca en ese momento.
+SCORE_WRONG_PENALTY = 5
+
+# Cada SCORE_COMBO_STEP notas correctas SEGUIDAS (sin fallar en el
+# medio), el multiplicador sube SCORE_COMBO_BONUS_PER_STEP, hasta un
+# tope de SCORE_COMBO_MULTIPLIER_MAX. Ej: con los valores de abajo,
+# el combo 5 da x1.5, el combo 10 da x2.0, etc.
+SCORE_COMBO_STEP = 5
+SCORE_COMBO_BONUS_PER_STEP = 0.5
+SCORE_COMBO_MULTIPLIER_MAX = 3.0
+
+# Bono de precision: se mide cuanto tiempo pasa entre que la nota se
+# completa (ya sostuviste el tiempo requerido) y el momento en que
+# sueltas la tecla. Soltar casi de inmediato da el bono maximo;
+# quedarte pegado a la tecla mucho mas de lo necesario no da bono.
+SCORE_TIMING_PERFECT_MS = 150
+SCORE_TIMING_GOOD_MS = 400
+SCORE_TIMING_PERFECT_BONUS = 5
+SCORE_TIMING_GOOD_BONUS = 2
+
+# ------------------------------------------------------------------
 # Distribucion de teclas del teclado fisico -> teclas del piano
 # ------------------------------------------------------------------
 OFFSET_TO_KEY = {

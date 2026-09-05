@@ -1,30 +1,3 @@
-"""
-songs.py - Canciones integradas para practicar con el piano de escritorio
-==========================================================================
-Este archivo está separado de main.py a propósito: para agregar una
-canción nueva en el futuro, solo hay que añadir una entrada más a la
-lista SONGS de aquí abajo. main.py no necesita cambiar.
-
-Formato de cada canción:
-    ("Nombre visible", [(nota, duracion), (nota, duracion), ...])
-
-- "nota": nombre de la nota, igual a como las nombra main.py.
-- "duracion": número relativo (1 = negra, 0.5 = corchea, 2 = blanca, etc).
-
-DURACIÓN REAL EN SEGUNDOS: el modo práctica sostiene cada nota por
-duracion * (60 / BPM) segundos. Con el BPM por defecto (100), una nota de
-duración 1 dura 0.6s. Puedes calcular cuánto dura una canción completa
-sumando todas las duraciones y multiplicando por (60 / BPM).
-
-Todas las piezas de abajo son de dominio público. Cada una se define UNA
-vez como su tema/frase principal (MELODIA_X) y luego se repite varias
-veces con repetir(...) para que la sesión de práctica dure más — igual
-que en una interpretación real, donde estos temas se repiten (los
-minuetos y el Canon de Pachelbel literalmente están construidos así).
-Si quieres que dure más o menos, solo cambia el número de repeticiones,
-o ajusta el BPM con +/- mientras tocas.
-"""
-
 
 def repetir(notas, veces):
     """Repite una lista de (nota, duracion) 'veces' veces seguidas."""
@@ -32,73 +5,141 @@ def repetir(notas, veces):
 
 
 # ------------------------------------------------------------------
-# Para Elisa (Beethoven) - tema principal, ~21 tiempos por vuelta
+# Para Elisa (Beethoven) - tema principal
+# CORREGIDO: melodía completa subida 1 octava (ver nota arriba).
 # ------------------------------------------------------------------
 MELODIA_PARA_ELISA = [
-    ("E4", 0.5), ("Ds4", 0.5), ("E4", 0.5), ("Ds4", 0.5), ("E4", 0.5),
-    ("B3", 0.5), ("D4", 0.5), ("C4", 0.5), ("A3", 1),
-    ("C3", 0.5), ("E3", 0.5), ("A3", 0.5), ("B3", 1),
-    ("E3", 0.5), ("Gs3", 0.5), ("B3", 0.5), ("C4", 1),
-    ("E4", 0.5), ("Ds4", 0.5), ("E4", 0.5), ("Ds4", 0.5), ("E4", 0.5),
-    ("B3", 0.5), ("D4", 0.5), ("C4", 0.5), ("A3", 1),
-    ("C3", 0.5), ("E3", 0.5), ("A3", 0.5), ("B3", 1),
-    ("D4", 0.5), ("C4", 0.5), ("B3", 0.5), ("A3", 2),
+    ("E5", 0.5), ("Ds5", 0.5), ("E5", 0.5), ("Ds5", 0.5), ("E5", 0.5),
+    ("B4", 0.5), ("D5", 0.5), ("C5", 0.5), ("A4", 1),
+    ("C4", 0.5), ("E4", 0.5), ("A4", 0.5), ("B4", 1),
+    ("E4", 0.5), ("Gs4", 0.5), ("B4", 0.5), ("C5", 1),
+    ("E5", 0.5), ("Ds5", 0.5), ("E5", 0.5), ("Ds5", 0.5), ("E5", 0.5),
+    ("B4", 0.5), ("D5", 0.5), ("C5", 0.5), ("A4", 1),
+    ("C4", 0.5), ("E4", 0.5), ("A4", 0.5), ("B4", 1),
+    ("D5", 0.5), ("C5", 0.5), ("B4", 0.5), ("A4", 2),
 ]
 
 # ------------------------------------------------------------------
-# Himno a la Alegría (Beethoven, 9na Sinfonía) - tema con puente, ~64 tiempos
+# Himno a la Alegría (Beethoven, 9na Sinfonía)
+# Capítulo 1: tema | Capítulo 2: repetición | Capítulo 3: puente
+# Capítulo 4: regreso al tema | Capítulo 5: coda con arpegio
 # ------------------------------------------------------------------
-MELODIA_HIMNO_ALEGRIA = [
+HIMNO_TEMA = [
     ("E4", 1), ("E4", 1), ("F4", 1), ("G4", 1),
     ("G4", 1), ("F4", 1), ("E4", 1), ("D4", 1),
     ("C4", 1), ("C4", 1), ("D4", 1), ("E4", 1),
     ("E4", 1.5), ("D4", 0.5), ("D4", 2),
-    ("E4", 1), ("E4", 1), ("F4", 1), ("G4", 1),
-    ("G4", 1), ("F4", 1), ("E4", 1), ("D4", 1),
-    ("C4", 1), ("C4", 1), ("D4", 1), ("E4", 1),
-    ("D4", 1), ("C4", 1), ("C4", 2),
+]
+
+HIMNO_PUENTE = [
     ("D4", 1), ("D4", 1), ("E4", 1), ("C4", 1),
     ("D4", 1), ("E4", 0.5), ("F4", 0.5), ("E4", 1), ("C4", 1),
     ("D4", 1), ("E4", 0.5), ("F4", 0.5), ("E4", 1), ("D4", 1),
     ("C4", 1), ("D4", 1), ("G3", 2),
+]
+
+HIMNO_REGRESO = [
     ("E4", 1), ("E4", 1), ("F4", 1), ("G4", 1),
     ("G4", 1), ("F4", 1), ("E4", 1), ("D4", 1),
     ("C4", 1), ("C4", 1), ("D4", 1), ("E4", 1),
     ("D4", 1), ("C4", 1), ("C4", 2),
 ]
 
-# ------------------------------------------------------------------
-# Minueto en Sol (Bach/Petzold) - partes A y B, ~46 tiempos
-# ------------------------------------------------------------------
-MELODIA_MINUETO_SOL = [
-    ("D4", 1), ("G3", 1), ("A3", 1), ("B3", 1),
-    ("C4", 1), ("D4", 2), ("G3", 1),
-    ("G3", 1), ("Fs3", 1), ("G3", 1), ("A3", 1),
-    ("B3", 2), ("B3", 1),
-    ("C4", 1), ("B3", 1), ("A3", 1), ("G3", 1),
-    ("Fs3", 1), ("G3", 2), ("D3", 1),
-    ("G3", 1), ("A3", 1), ("B3", 1), ("C4", 1),
-    ("D4", 2), ("D4", 1),
-    ("G4", 1), ("Fs4", 1), ("G4", 1), ("D4", 1),
-    ("G4", 1), ("Fs4", 1), ("G4", 1), ("B3", 1),
-    ("C4", 1), ("B3", 1), ("A3", 1), ("G3", 1),
-    ("Fs3", 1), ("G3", 2), ("G3", 1),
+HIMNO_CODA = [
+    ("C4", 0.5), ("E4", 0.5), ("G4", 0.5), ("C5", 0.5),
+    ("G4", 0.5), ("E4", 0.5), ("C4", 1),
+    ("G3", 1), ("C4", 2),
 ]
 
+MELODIA_HIMNO_ALEGRIA = (
+    HIMNO_TEMA          # Capítulo 1
+    + HIMNO_TEMA        # Capítulo 2 (repetición)
+    + HIMNO_PUENTE      # Capítulo 3 (puente)
+    + HIMNO_REGRESO     # Capítulo 4 (regreso)
+    + HIMNO_CODA        # Capítulo 5 (coda con arpegio)
+)
+
 # ------------------------------------------------------------------
-# Canon en Re (Pachelbel) - el famoso bajo ostinato de 8 notas.
-# En la pieza real este patrón se repite unas 28 veces a lo largo de
-# ~5 minutos; aquí lo repetimos 20 veces (~1.6 min a 100 BPM).
+# Minueto en Sol (Bach/Petzold)
+# CORREGIDO: melodía completa subida 1 octava para reflejar el
+# original (ver nota arriba). A - repetición de A - B - repetición
+# de B - coda.
+# ------------------------------------------------------------------
+MINUETO_A = [
+    ("D5", 1), ("G4", 1), ("A4", 1), ("B4", 1),
+    ("C5", 1), ("D5", 2), ("G4", 1),
+    ("G4", 1), ("Fs4", 1), ("G4", 1), ("A4", 1),
+    ("B4", 2), ("B4", 1),
+    ("C5", 1), ("B4", 1), ("A4", 1), ("G4", 1),
+    ("Fs4", 1), ("G4", 2), ("D4", 1),
+    ("G4", 1), ("A4", 1), ("B4", 1), ("C5", 1),
+    ("D5", 2), ("D5", 1),
+]
+
+MINUETO_B = [
+    ("G5", 1), ("Fs5", 1), ("G5", 1), ("D5", 1),
+    ("G5", 1), ("Fs5", 1), ("G5", 1), ("B4", 1),
+    ("C5", 1), ("B4", 1), ("A4", 1), ("G4", 1),
+    ("Fs4", 1), ("G4", 2), ("G4", 1),
+]
+
+MINUETO_CODA = [
+    ("A4", 1), ("B4", 1), ("C5", 1),
+    ("D5", 2), ("G4", 1),
+    ("Fs4", 1), ("G4", 2),
+]
+
+MELODIA_MINUETO_SOL = (
+    MINUETO_A
+    + MINUETO_A     # repetición de A
+    + MINUETO_B
+    + MINUETO_B     # repetición de B
+    + MINUETO_CODA
+)
+
+# ------------------------------------------------------------------
+# Canon en Re (Pachelbel)
+# Bajo solo -> primera variación (escala descendente, la más famosa
+# del Canon) -> variación más movida (corcheas) -> regreso al bajo
+# -> coda.
 # ------------------------------------------------------------------
 OSTINATO_CANON_RE = [
     ("D4", 1), ("A3", 1), ("B3", 1), ("Fs3", 1),
     ("G3", 1), ("D3", 1), ("G3", 1), ("A3", 1),
 ]
 
+CANON_VARIACION_1 = [
+    ("Fs4", 1), ("E4", 1), ("D4", 1), ("Cs4", 1),
+    ("B3", 1), ("A3", 1), ("B3", 1), ("Cs4", 1),
+]
+
+CANON_VARIACION_2 = [
+    ("Fs4", 0.5), ("E4", 0.5), ("E4", 0.5), ("D4", 0.5),
+    ("D4", 0.5), ("Cs4", 0.5), ("Cs4", 0.5), ("B3", 0.5),
+    ("B3", 0.5), ("A3", 0.5), ("A3", 0.5), ("B3", 0.5),
+    ("B3", 0.5), ("Cs4", 0.5), ("Cs4", 0.5), ("D4", 0.5),
+]
+
+CANON_CODA = [
+    ("D4", 1), ("Cs4", 1), ("B3", 1), ("A3", 1),
+    ("G3", 1), ("Fs3", 1), ("G3", 2),
+    ("A3", 1), ("D4", 2),
+]
+
+MELODIA_CANON_RE = (
+    repetir(OSTINATO_CANON_RE, 3)      # bajo solo
+    + CANON_VARIACION_1 * 2            # primera variación
+    + CANON_VARIACION_2 * 2            # variación más movida
+    + repetir(OSTINATO_CANON_RE, 2)    # regreso al bajo
+    + CANON_CODA                       # coda
+)
+
 # ------------------------------------------------------------------
-# Amazing Grace (himno tradicional) - estrofa completa, ~31 tiempos
+# Amazing Grace (himno tradicional)
+# Estrofa -> estrofa una octava arriba (más intensidad) -> estrofa
+# de regreso -> coda. Notas de la estrofa alta escritas literalmente.
 # ------------------------------------------------------------------
-MELODIA_AMAZING_GRACE = [
+AMAZING_GRACE_ESTROFA = [
     ("G3", 1), ("C4", 1), ("C4", 0.5), ("E4", 0.5), ("D4", 1), ("C4", 1),
     ("A3", 1), ("G3", 2),
     ("G3", 1), ("C4", 1), ("C4", 0.5), ("E4", 0.5), ("D4", 1), ("C4", 1),
@@ -109,10 +150,34 @@ MELODIA_AMAZING_GRACE = [
     ("A3", 1), ("G3", 2),
 ]
 
+AMAZING_GRACE_ESTROFA_OCTAVA_ARRIBA = [
+    ("G4", 1), ("C5", 1), ("C5", 0.5), ("E5", 0.5), ("D5", 1), ("C5", 1),
+    ("A4", 1), ("G4", 2),
+    ("G4", 1), ("C5", 1), ("C5", 0.5), ("E5", 0.5), ("D5", 1), ("C5", 1),
+    ("A4", 1), ("G4", 2),
+    ("G4", 1), ("C5", 1), ("E5", 1), ("G5", 1), ("Fs5", 1),
+    ("E5", 1), ("D5", 2),
+    ("C5", 1), ("E5", 1), ("D5", 1), ("C5", 1),
+    ("A4", 1), ("G4", 2),
+]
+
+AMAZING_GRACE_CODA = [
+    ("D4", 1), ("C4", 1), ("A3", 1), ("G3", 2),
+]
+
+MELODIA_AMAZING_GRACE = (
+    AMAZING_GRACE_ESTROFA
+    + AMAZING_GRACE_ESTROFA_OCTAVA_ARRIBA
+    + AMAZING_GRACE_ESTROFA                    # regreso
+    + AMAZING_GRACE_CODA
+)
+
 # ------------------------------------------------------------------
-# Greensleeves (tradicional inglesa) - sección A completa, ~28 tiempos
+# Greensleeves (tradicional inglesa)
+# Verso -> repetición -> variación aguda tipo estribillo (octava
+# arriba) -> regreso -> cierre. Notas escritas literalmente.
 # ------------------------------------------------------------------
-MELODIA_GREENSLEEVES = [
+GREENSLEEVES_VERSO = [
     ("A3", 1), ("C4", 1), ("D4", 1), ("E4", 1),
     ("F4", 1), ("E4", 1), ("D4", 1), ("B3", 1),
     ("C4", 1), ("B3", 1), ("A3", 1), ("A3", 1),
@@ -122,13 +187,91 @@ MELODIA_GREENSLEEVES = [
     ("C4", 1), ("A3", 1), ("Gs3", 1), ("A3", 2),
 ]
 
+GREENSLEEVES_VERSO_OCTAVA_ARRIBA = [
+    ("A4", 1), ("C5", 1), ("D5", 1), ("E5", 1),
+    ("F5", 1), ("E5", 1), ("D5", 1), ("B4", 1),
+    ("C5", 1), ("B4", 1), ("A4", 1), ("A4", 1),
+    ("E4", 1), ("Gs4", 0.5), ("A4", 0.5), ("A4", 1),
+    ("A4", 1), ("C5", 1), ("D5", 1), ("E5", 1),
+    ("F5", 1), ("E5", 1), ("D5", 1), ("B4", 1),
+    ("C5", 1), ("A4", 1), ("Gs4", 1), ("A4", 2),
+]
 
+GREENSLEEVES_CIERRE = [
+    ("D4", 1), ("C4", 1), ("B3", 1), ("A3", 1),
+    ("Gs3", 1), ("A3", 2),
+]
+
+MELODIA_GREENSLEEVES = (
+    GREENSLEEVES_VERSO
+    + GREENSLEEVES_VERSO                       # repetición
+    + GREENSLEEVES_VERSO_OCTAVA_ARRIBA         # variación aguda (estribillo)
+    + GREENSLEEVES_VERSO                       # regreso
+    + GREENSLEEVES_CIERRE                      # cierre
+)
+
+# ------------------------------------------------------------------
+# Twinkle Twinkle Little Star (tradicional) - para practicar corto
+# y fácil, en la región de Do central.
+# ------------------------------------------------------------------
+MELODIA_TWINKLE = [
+    ("C4", 1), ("C4", 1), ("G4", 1), ("G4", 1), ("A4", 1), ("A4", 1), ("G4", 2),
+    ("F4", 1), ("F4", 1), ("E4", 1), ("E4", 1), ("D4", 1), ("D4", 1), ("C4", 2),
+    ("G4", 1), ("G4", 1), ("F4", 1), ("F4", 1), ("E4", 1), ("E4", 1), ("D4", 2),
+    ("G4", 1), ("G4", 1), ("F4", 1), ("F4", 1), ("E4", 1), ("E4", 1), ("D4", 2),
+    ("C4", 1), ("C4", 1), ("G4", 1), ("G4", 1), ("A4", 1), ("A4", 1), ("G4", 2),
+    ("F4", 1), ("F4", 1), ("E4", 1), ("E4", 1), ("D4", 1), ("D4", 1), ("C4", 2),
+]
+
+# ------------------------------------------------------------------
+# Mary Had a Little Lamb (tradicional) - todavía más fácil, buena
+# para empezar.
+# ------------------------------------------------------------------
+MELODIA_MARY = [
+    ("E4", 1), ("D4", 1), ("C4", 1), ("D4", 1), ("E4", 1), ("E4", 1), ("E4", 2),
+    ("D4", 1), ("D4", 1), ("D4", 2),
+    ("E4", 1), ("G4", 1), ("G4", 2),
+    ("E4", 1), ("D4", 1), ("C4", 1), ("D4", 1), ("E4", 1), ("E4", 1), ("E4", 1), ("E4", 1),
+    ("D4", 1), ("D4", 1), ("E4", 1), ("D4", 1), ("C4", 2),
+]
+
+# ------------------------------------------------------------------
+# Happy Birthday (melodía tradicional, de "Good Morning to All",
+# 1893 - de dominio público) - con anacrusa (pickup) al inicio de
+# cada frase, como se toca de verdad.
+# ------------------------------------------------------------------
+MELODIA_CUMPLEANOS = [
+    ("G3", 0.5), ("G3", 0.5), ("A3", 1), ("G3", 1), ("C4", 1), ("B3", 2),
+    ("G3", 0.5), ("G3", 0.5), ("A3", 1), ("G3", 1), ("D4", 1), ("C4", 2),
+    ("G3", 0.5), ("G3", 0.5), ("G4", 1), ("E4", 1), ("C4", 1), ("B3", 1), ("A3", 2),
+    ("F4", 0.5), ("F4", 0.5), ("E4", 1), ("C4", 1), ("D4", 1), ("C4", 2),
+]
+
+# ------------------------------------------------------------------
+# Jingle Bells (tradicional, solo el estribillo, que es la parte que
+# todo el mundo reconoce) - se repite con repetir().
+# ------------------------------------------------------------------
+MELODIA_JINGLE_BELLS = [
+    ("E4", 1), ("E4", 1), ("E4", 2),
+    ("E4", 1), ("E4", 1), ("E4", 2),
+    ("E4", 1), ("G4", 1), ("C4", 1), ("D4", 1), ("E4", 4),
+    ("F4", 1), ("F4", 1), ("F4", 1), ("F4", 1),
+    ("F4", 1), ("E4", 1), ("E4", 1), ("E4", 0.5), ("E4", 0.5),
+    ("D4", 1), ("D4", 1), ("E4", 1), ("D4", 2), ("G4", 2),
+]
+
+# ------------------------------------------------------------------
+# Lista final de canciones
+# ------------------------------------------------------------------
 SONGS = [
-    # nombre, notas repetidas -> duración aprox. a 100 BPM
-    ("Para Elisa (Beethoven)", repetir(MELODIA_PARA_ELISA, 7)),          # ~1.5 min
-    ("Himno a la Alegría (Beethoven)", repetir(MELODIA_HIMNO_ALEGRIA, 3)),  # ~1.9 min
-    ("Minueto en Sol (Bach/Petzold)", repetir(MELODIA_MINUETO_SOL, 4)),  # ~1.8 min
-    ("Canon en Re (Pachelbel)", repetir(OSTINATO_CANON_RE, 20)),         # ~1.6 min
-    ("Amazing Grace (himno tradicional)", repetir(MELODIA_AMAZING_GRACE, 5)),  # ~1.5 min
-    ("Greensleeves (tradicional inglesa)", repetir(MELODIA_GREENSLEEVES, 6)),  # ~1.7 min
+    ("Para Elisa (Beethoven)", repetir(MELODIA_PARA_ELISA, 5)),  # ~63s a 100 BPM
+    ("Himno a la Alegría (Beethoven)", MELODIA_HIMNO_ALEGRIA),
+    ("Minueto en Sol (Bach/Petzold)", MELODIA_MINUETO_SOL),
+    ("Canon en Re (Pachelbel)", MELODIA_CANON_RE),
+    ("Amazing Grace (himno tradicional)", MELODIA_AMAZING_GRACE),
+    ("Greensleeves (tradicional inglesa)", MELODIA_GREENSLEEVES),
+    ("Twinkle Twinkle Little Star (tradicional)", repetir(MELODIA_TWINKLE, 2)),
+    ("Mary Had a Little Lamb (tradicional)", repetir(MELODIA_MARY, 3)),
+    ("Happy Birthday (tradicional, dominio público)", repetir(MELODIA_CUMPLEANOS, 3)),
+    ("Jingle Bells (estribillo, tradicional)", repetir(MELODIA_JINGLE_BELLS, 2)),
 ]
