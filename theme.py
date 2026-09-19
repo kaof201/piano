@@ -48,9 +48,18 @@ WARN_GLOW = (255, 176, 64)       # aviso de cambio de octava
 TEXT_PRIMARY = (240, 238, 248)
 TEXT_DIM = (152, 148, 170)
 TEXT_ACCENT = (255, 200, 90)
-PANEL_BG = (32, 28, 48)
-PANEL_BORDER = (62, 56, 82)
-PROGRESS_BG = (48, 44, 64)
+PANEL_BG = (38, 33, 54)          # un punto mas claro que el fondo, para que se note el panel
+PANEL_BG_SOFT = (34, 30, 50)     # variante para degradados sutiles dentro del panel
+PANEL_BORDER = (58, 52, 78)      # borde fino y discreto (no es el elemento que debe destacar)
+PANEL_HOVER_BG = (46, 40, 66)    # fondo al pasar el mouse por una tarjeta/boton
+PANEL_SELECTED_BG = (50, 44, 72)  # fondo de la tarjeta/boton seleccionado
+PROGRESS_BG = (46, 41, 62)
+
+# Colores para el destello breve al acertar/fallar una nota (ver
+# game.py: state["flash"]). No son halos permanentes: aparecen un
+# instante y se apagan solos.
+HIT_FLASH = (86, 232, 140)
+MISS_FLASH = (255, 96, 96)
 
 # Paleta de acentos para las tarjetas del menu de canciones (se asigna
 # una por indice, ciclica si hay mas canciones que colores).
@@ -72,12 +81,14 @@ def load_fonts():
     """Crea y devuelve todas las fuentes que usa la app en un dict."""
     return {
         "title": pygame.font.SysFont("Arial", 28, bold=True),
-        "subtitle": pygame.font.SysFont("Arial", 16),
-        "body": pygame.font.SysFont("Arial", 18),
-        "body_bold": pygame.font.SysFont("Arial", 18, bold=True),
+        "subtitle": pygame.font.SysFont("Arial", 17),
+        "body": pygame.font.SysFont("Arial", 19),
+        "body_bold": pygame.font.SysFont("Arial", 19, bold=True),
         "key_label": pygame.font.SysFont("Arial", 22, bold=True),
         "menu_title": pygame.font.SysFont("Arial", 21, bold=True),
-        "menu_meta": pygame.font.SysFont("Arial", 15),
+        "menu_meta": pygame.font.SysFont("Arial", 16),
         "badge": pygame.font.SysFont("Arial", 20, bold=True),
         "chip": pygame.font.SysFont("Arial", 17, bold=True),
+        "score_big": pygame.font.SysFont("Arial", 34, bold=True),
+        "panel_title": pygame.font.SysFont("Arial", 19, bold=True),
     }

@@ -94,7 +94,7 @@ ROW_HIGH = [(12, False), (13, True), (14, False), (15, True), (16, False),
             (22, True), (23, False), (24, False)]          # octava alta
 
 NUM_KEYS = [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5,
-            pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9]
+            pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_0]
 PLUS_KEYS = [pygame.K_EQUALS, pygame.K_KP_PLUS]
 MINUS_KEYS = [pygame.K_MINUS, pygame.K_KP_MINUS]
 FULLSCREEN_KEYS = [pygame.K_F11]
@@ -110,7 +110,7 @@ WHITE_KEY_H = 280
 BLACK_KEY_W = 58
 BLACK_KEY_H = 175
 ROW_GAP = 30
-TOP_MARGIN = 230   # espacio para titulo, progreso y proximas notas
+TOP_MARGIN = 260   # espacio para titulo, nombre de cancion, progreso y proximas notas
 BOTTOM_MARGIN = 50
 SIDE_MARGIN = 24
 PRESS_DIP = 8  # cuantos px "se hunde" una tecla activa al presionarla
@@ -119,7 +119,25 @@ MAX_WHITES = max(
     sum(1 for _, black in ROW_LOW if not black),
     sum(1 for _, black in ROW_HIGH if not black),
 )
-WIDTH = SIDE_MARGIN * 2 + MAX_WHITES * WHITE_KEY_W
+
+# ------------------------------------------------------------------
+# Paneles laterales: izquierdo (letra + "piano roll" de notas que se
+# acercan) y derecho (puntajes de la sesion). El piano y la cabecera
+# viven en el "escenario" central (STAGE_X.. STAGE_X+STAGE_WIDTH),
+# que mide justo lo que ocupa la fila de teclas mas ancha.
+# ------------------------------------------------------------------
+SIDE_PANEL_WIDTH = 230
+PANEL_GAP = 18
+PANEL_TOP = 14
+ROLL_MAX_UPCOMING = 5  # cuantas notas futuras se dibujan en el riel del panel izquierdo
+
+PIANO_WIDTH = MAX_WHITES * WHITE_KEY_W
+LEFT_PANEL_X = SIDE_MARGIN
+STAGE_X = SIDE_MARGIN + SIDE_PANEL_WIDTH + PANEL_GAP
+STAGE_WIDTH = PIANO_WIDTH
+RIGHT_PANEL_X = STAGE_X + STAGE_WIDTH + PANEL_GAP
+
+WIDTH = RIGHT_PANEL_X + SIDE_PANEL_WIDTH + SIDE_MARGIN
 HEIGHT = TOP_MARGIN + WHITE_KEY_H + ROW_GAP + WHITE_KEY_H + BOTTOM_MARGIN
 
 MODE_FREE = "free"

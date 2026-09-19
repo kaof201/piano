@@ -44,7 +44,8 @@ from songs import SONGS
 from background import AnimatedBackground
 from hud_view import draw_hud
 from piano_view import draw_piano
-from menu_view import draw_song_menu
+from menu_view import draw_song_menu, card_rects
+from side_panels import draw_left_panel, draw_right_panel
 
 
 def _combo_multiplier(combo):
@@ -120,6 +121,17 @@ class PianoApp:
             "popup_text": "",                # feedback flotante tipo "+15" / "-5"
             "popup_color": None,
             "popup_until": 0,
+            # Mejor puntaje/combo por cancion en ESTA sesion (se pierde
+            # al cerrar el programa; no se guarda en disco).
+            # Formato: {nombre_cancion: {"score": int, "combo": int}}
+            "session_best": {},
+            # Destello breve de acierto/fallo sobre una tecla (ver
+            # piano_view.FLASH_DURATION_MS). None cuando no hay ninguno
+            # activo. No es un halo permanente: se apaga solo.
+            "flash": None,
+            # Posicion del mouse, para los estados hover de las
+            # tarjetas del menu de canciones.
+            "mouse_pos": (0, 0),
         }
 
     # ------------------------------------------------------------
@@ -136,6 +148,10 @@ class PianoApp:
                     running = self._handle_keydown(event.key)
                 elif event.type == pygame.KEYUP:
                     self._handle_keyup(event.key)
+                elif event.type == pygame.MOUSEMOTION:
+                    self.state["mouse_pos"] = event.pos
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    self._handle_mouse_click(event.pos)
 
             self._update_song_progress()
             self.background.update(dt)
@@ -209,6 +225,18 @@ class PianoApp:
                 state["menu_selected"] = idx
                 self._start_song(idx)
 
+    def _handle_mouse_click(self, pos):
+        """Un clic sobre una tarjeta del menu la selecciona y arranca
+        esa cancion directamente (equivalente a moverse con las
+        flechas hasta ahi y confirmar con Enter)."""
+        if self.state["mode"] != MODE_MENU:
+            return
+        for i, rect in enumerate(card_rects(len(SONGS))):
+            if rect.collidepoint(pos):
+                self.state["menu_selected"] = i
+                self._start_song(i)
+                return
+
     def _handle_keyup(self, key):
         if key not in KEY_OFFSETS:
             return
@@ -261,20 +289,31 @@ class PianoApp:
                     state["hold_start"] = pygame.time.get_ticks()
                 else:
                     # Tecla equivocada mientras se practica una cancion.
-                    self._register_miss()
+                    self._register_miss(offset)
 
-    def _register_miss(self):
+    def _register_miss(self, offset):
         state = self.state
         state["score"] = max(0, state["score"] - SCORE_WRONG_PENALTY)
         state["combo"] = 0
         state["misses"] += 1
-        self._show_popup(f"-{SCORE_WRONG_PENALTY}", theme.WARN_GLOW)
+        self._show_popup(f"-{SCORE_WRONG_PENALTY}", theme.MISS_FLASH)
+        state["flash"] = {"offset": offset, "color": theme.MISS_FLASH, "start": pygame.time.get_ticks()}
 
     def _show_popup(self, text, color):
         state = self.state
         state["popup_text"] = text
         state["popup_color"] = color
         state["popup_until"] = pygame.time.get_ticks() + 900
+
+    def _register_session_best(self, song_name, score, max_combo):
+        """Guarda el puntaje/combo de esta corrida si supera el mejor
+        que llevabas para esta cancion en la sesion actual (no se
+        persiste en disco, se pierde al cerrar el programa)."""
+        best = self.state["session_best"].get(song_name)
+        if best is None or score > best["score"]:
+            self.state["session_best"][song_name] = {"score": score, "combo": max_combo}
+        elif max_combo > best["combo"]:
+            best["combo"] = max_combo
 
     def _start_song(self, idx):
         name, notes = SONGS[idx]
@@ -298,6 +337,7 @@ class PianoApp:
         state["last_completed_offset"] = None
         state["last_completed_time"] = 0
         state["popup_text"] = ""
+        state["flash"] = None
 
         if midis:
             needed = needed_base_for_midi(midis[0], self.base_midi)
@@ -339,6 +379,7 @@ class PianoApp:
         multiplier = _combo_multiplier(state["combo"] - 1)
         label = f"+{points}" if multiplier <= 1.0 else f"+{points} (x{multiplier:.1f})"
         self._show_popup(label, theme.TARGET_GLOW)
+        state["flash"] = {"offset": target_offset_view, "color": theme.HIT_FLASH, "start": pygame.time.get_ticks()}
 
         # Se guarda para poder calcular el bono de precision cuando
         # el jugador finalmente suelte la tecla (en _handle_keyup).
@@ -350,13 +391,12 @@ class PianoApp:
         state["note_start"] = pygame.time.get_ticks()
 
         if state["song_index"] >= len(state["song_midis"]):
-            resumen = (
-                f"Cancion completa: {state['song_name']}! "
-                f"Puntaje: {state['score']}  |  Combo maximo: {state['max_combo']}  |  "
-                f"Aciertos: {state['hits']}  |  Fallos: {state['misses']}"
-            )
-            state["message"] = resumen
+            # El resumen completo (puntaje, combo maximo, aciertos/fallos)
+            # ya queda a la vista en el panel derecho; aqui solo un aviso
+            # corto para que no se corte contra ese panel.
+            state["message"] = f"Cancion completa: {state['song_name']}! Puntaje final: {state['score']}"
             state["message_until"] = pygame.time.get_ticks() + 4000
+            self._register_session_best(state["song_name"], state["score"], state["max_combo"])
             state["mode"] = MODE_FREE
             state["song_index"] = 0
             state["song_midis"] = []
@@ -377,9 +417,12 @@ class PianoApp:
         self.background.draw(self.screen)
 
         if self.state["mode"] == MODE_MENU:
-            draw_song_menu(self.screen, self.fonts, SONGS, self.state["menu_selected"])
+            draw_song_menu(self.screen, self.fonts, SONGS, self.state["menu_selected"], self.state["mouse_pos"])
         else:
             draw_hud(self.screen, self.fonts, self.state)
             draw_piano(self.screen, self.fonts["key_label"], self.active_offsets, self.state)
+
+        draw_left_panel(self.screen, self.fonts, self.state)
+        draw_right_panel(self.screen, self.fonts, self.state, SONGS)
 
         pygame.display.flip()
